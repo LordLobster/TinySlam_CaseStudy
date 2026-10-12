@@ -1,0 +1,33 @@
+tinyslam:
+  ros__parameters:
+    use_sim_time: true
+    map_frame: map
+    odom_frame: odom              # diffdrive_controller odom_frame_id
+    base_frame: base_footprint    # diffdrive_controller base_frame_id
+
+    # Monte Carlo scan matcher (tinySLAM units: mm / degrees)
+    sigma_xy_mm: 100.0
+    sigma_theta_deg: 20.0
+    search_iterations: 1000
+
+    # Map update
+    hole_width_mm: 600            # obstacle "thickness" drawn behind each hit
+    map_quality: 50               # blend factor 0..255 per update
+    scan_span: 3                  # extra interpolated rays per beam when mapping
+    max_range_m: 0.0              # 0 = use the scan's range_max (12 m)
+
+    # Update throttling (lidar publishes at ~62 Hz)
+    min_scan_interval: 0.1        # s
+    min_travel_m: 0.0             # also require this much motion (0 = always update)
+    min_rotation_rad: 0.0
+
+    # /map output: 2048 px @ 25 mm, downsampled x2 -> 1024 px @ 0.05 m
+    map_downsample: 2
+    map_publish_period: 1.0
+
+    # The diff-drive controller's odometry tracks the wheel-axle midpoint, but the
+    # ICTE4001 robot's wheels are 0.221 m behind base_footprint. Naming the wheel
+    # frames lets the node correct odometry deltas for that offset. Leave empty if
+    # the axle is at base_frame's origin.
+    left_wheel_frame: drivewhl_l_link
+    right_wheel_frame: drivewhl_r_link
