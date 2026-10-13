@@ -1,0 +1,34 @@
+# tinySLAM parameters for a TurtleBot 4 / 4 Lite (iRobot Create 3 base + RPLIDAR A1).
+# Launch with: ros2 launch tinyslam_ros tinyslam_turtlebot4.launch.py
+# "/**" matches the node in any namespace (e.g. /robot1/tinyslam).
+/**:
+  ros__parameters:
+    use_sim_time: false          # real robot; the launch file overrides this
+    map_frame: map
+    odom_frame: odom             # Create 3 publishes odom -> base_link
+    base_frame: base_link
+
+    # Monte Carlo scan matcher (tinySLAM units: mm / degrees)
+    sigma_xy_mm: 100.0
+    sigma_theta_deg: 20.0
+    search_iterations: 1000
+
+    # Map update
+    hole_width_mm: 600            # obstacle "thickness" drawn behind each hit
+    map_quality: 50               # blend factor 0..255 per update
+    scan_span: 3                  # extra interpolated rays per beam when mapping
+    max_range_m: 8.0              # RPLIDAR A1 is noisy near its 12 m limit
+
+    # Update throttling: the RPLIDAR only publishes at ~7-10 Hz, so use every scan
+    min_scan_interval: 0.0        # s
+    min_travel_m: 0.0             # also require this much motion (0 = always update)
+    min_rotation_rad: 0.0
+
+    # /map output: 2048 px @ 25 mm, downsampled x2 -> 1024 px @ 0.05 m
+    map_downsample: 2
+    map_publish_period: 2.0       # slower than in sim to save WiFi bandwidth
+
+    # Create 3 odometry already tracks the wheel-axle midpoint at base_link,
+    # so no axle-offset correction is needed.
+    left_wheel_frame: ""
+    right_wheel_frame: ""

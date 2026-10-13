@@ -1,3 +1,44 @@
+# ---- colcon workspace output ----
 build/
 install/
 log/
+
+# ---- Python ----
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+
+# ---- C / C++ build artefacts (e.g. builds outside colcon) ----
+*.o
+*.a
+*.so
+CMakeCache.txt
+CMakeFiles/
+cmake_install.cmake
+compile_commands.json
+
+# ---- ROS runtime output ----
+# rosbag2 recordings
+rosbag2_*/
+*.db3
+*.mcap
+# tf2_tools view_frames output
+frames_*.pdf
+frames_*.gv
+# map saved by the /tinyslam/save_pgm service (run from the workspace root)
+/tinyslam_map.pgm
+
+# ---- Editors ----
+.idea/
+*.swp
+*~
+
+# ---- OS metadata ----
+# Windows "downloaded from the internet" markers created when copying files into WSL
+*:Zone.Identifier
+.DS_Store
+Thumbs.db
+
+# ---- original tinySLAM test program output ----
+tinyslam/openslam_tinyslam/test/*_loop*.pgm

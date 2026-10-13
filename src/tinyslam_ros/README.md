@@ -34,6 +34,36 @@ To save the map as an image (`tinyslam_map.pgm`, written to the folder you launc
 ros2 service call /tinyslam/save_pgm std_srvs/srv/Trigger
 ```
 
+## Running on a TurtleBot 4
+
+`config/tinyslam_turtlebot4.yaml` and `launch/tinyslam_turtlebot4.launch.py` are set up for a TurtleBot 4 or 4 Lite (Create 3 base, RPLIDAR A1):
+
+```bash
+ros2 launch tinyslam_ros tinyslam_turtlebot4.launch.py                      # no namespace
+ros2 launch tinyslam_ros tinyslam_turtlebot4.launch.py namespace:=robot1    # namespaced robot
+ros2 launch tinyslam_ros tinyslam_turtlebot4.launch.py use_sim_time:=true   # turtlebot4_simulator
+```
+
+Differences from the Gazebo settings:
+
+| Setting | Value | Why |
+|---|---|---|
+| `base_frame` | `base_link` | The Create 3 publishes `odom → base_link`. |
+| `left_wheel_frame`, `right_wheel_frame` | empty | The Create 3's `base_link` is already at the wheel axle, so no correction is needed. |
+| `use_sim_time` | `false` | Real robot. |
+| `max_range_m` | 8.0 | The RPLIDAR A1 is noisy near its 12 m limit. |
+| `min_scan_interval` | 0.0 | The RPLIDAR only publishes at about 7–10 Hz, so every scan is used. |
+| `map_publish_period` | 2.0 s | Less WiFi traffic. |
+
+With a namespace, the node subscribes to `<namespace>/scan` and `<namespace>/tf`, and publishes `<namespace>/map`.
+
+Before the first run, check the frame names on your robot with `ros2 run tf2_tools view_frames`.
+
+Notes:
+
+- Don't run it alongside the TurtleBot 4's own `slam.launch.py` or `localization.launch.py`. Those also publish `map → odom`.
+- Turn slowly while mapping, at about 0.3–0.5 rad/s. The RPLIDAR spins, so the robot moves during each scan, and the node doesn't correct for that.
+
 ## How it works
 
 - The tinySLAM core (`CoreSLAM.c`, `CoreSLAM_random.c`, `CoreSLAM_ext.c`, `CoreSLAM.h`) is copied into `core/`. The original clone in `tinyslam/` is unchanged except for an empty `COLCON_IGNORE` file, which stops `colcon build` from building the clone as a separate package.
